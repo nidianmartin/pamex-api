@@ -4,13 +4,8 @@ const User = require("../models/user.model");
 
 module.exports.create = (req, res, next) => {
   const user = new User({
-    name: req.body.name,
-    lastname: req.body.lastname,
-    email: req.body.email,
-    password: req.body.password,
-    avatar: req.body.avatar,
-    phoneNumber: req.body.phoneNumber,
-    bio: req.body.bio,
+    ...req.body,
+    avatar: req.file ? req.file.path : undefined,
   });
 
   user
@@ -20,7 +15,6 @@ module.exports.create = (req, res, next) => {
         name: user.name,
         email: user.email,
         id: user._id.toString(),
-        activationToken: user.activation.token,
       });
       res.status(201).json(user);
     })
@@ -52,7 +46,46 @@ module.exports.doLogin = (req, res, next) => {
     .catch(next);
 };
 
-module.exports.logout = (req, res) => {
-	req.session.destroy();
-	res.status(204).json();
+module.exports.edit = (req, res, next) => {
+  User.findById(req.params.id)
+    .then(user => {
+      res.json(user);
+    })
+    .catch(next)
+}
+
+module.exports.update = (req, res, next) => {
+  const body = req.body
+
+  if (req.file) {
+    body.avatar = req.file.path
   }
+
+  User.findByIdAndUpdate(req.params.id, body, { runValidators: true, new: true })
+    .then(user => {
+      if (user) {
+        res.json({message: 'User updated successfully'})
+      } else {
+        throw createError(400, 'User not updated');
+      }
+    })
+    .catch(next)
+}
+
+module.exports.profile = (req, res, next) => {
+  User.findById(req.params.id)
+    .populate("wallet")
+    .then((user) => {
+			if (user) {
+				res.json(user);
+			} else {
+				throw createError(404, 'User not found');
+			}
+		})
+		.catch(e => next(createError(400, e)));
+}
+
+module.exports.logout = (req, res) => {
+  req.session.destroy();
+  res.status(204).json();
+};

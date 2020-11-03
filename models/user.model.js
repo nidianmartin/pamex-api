@@ -1,16 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
-
+const Wallet = require('./wallet.model')
 const EMAIL_PATTERN = /^(([^<>()\[\]\.,;:\s@\']+(\.[^<>()\[\]\.,;:\s@\']+)*)|(\'.+\'))@(([^<>()[\]\.,;:\s@\']+\.)+[^<>()[\]\.,;:\s@\']{2,})$/i;
-
-const generateRandomToken = () => {
-  const characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  let token = '';
-  for (let i = 0; i < 25; i++) {
-    token += characters[Math.floor(Math.random() * characters.length)];
-  }
-  return token;
-}
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -40,24 +31,11 @@ const userSchema = new mongoose.Schema({
   },
   avatar: {
     type: String,
-    default: '/images/default-user-avatar.png',
+    default: '../public/images/default-user-avatar.png',
     trim: true
   },
-  phoneNumber: String,
+  phone: String,
   bio: String,
-  activation: {
-    active: {
-      type: Boolean,
-      default: false
-    },
-    token: {
-      type: String,
-      default: generateRandomToken
-    },
-    oldToken: {
-      type: String
-    }
-  },
 },{ timestamps: true, toJSON: { virtuals: true } });
 
 userSchema.pre('save', function(next) {
