@@ -31,14 +31,20 @@ const userSchema = new mongoose.Schema({
   },
   avatar: {
     type: String,
-    default: '../public/images/default-user-avatar.png',
+    default: 'https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcSgMQyeXHo2tzPRatT5CCO9xkei66IqM4Pn2g&usqp=CAU',
     trim: true
   },
   favorites: {
     type: [Object]
   },
-  phone: String,
-  bio: String,
+  phone: {
+    type: String,
+    default: '+34 888 78 98'
+  },
+  bio: {
+    type: String,
+    default: 'Fanatic@ de este criptomundo'
+  },
 },{ timestamps: true, toJSON: { virtuals: true } });
 
 userSchema.pre('save', function(next) {

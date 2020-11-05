@@ -46,14 +46,6 @@ module.exports.doLogin = (req, res, next) => {
     .catch(next);
 };
 
-module.exports.edit = (req, res, next) => {
-  User.findById(req.params.id)
-    .then(user => {
-      res.json(user);
-    })
-    .catch(next)
-}
-
 module.exports.update = (req, res, next) => {
   const body = req.body
 
@@ -64,7 +56,7 @@ module.exports.update = (req, res, next) => {
   User.findByIdAndUpdate(req.params.id, body, { runValidators: true, new: true })
     .then(user => {
       if (user) {
-        res.json({message: 'User updated successfully'})
+        res.json(user)
       } else {
         throw createError(400, 'User not updated');
       }
