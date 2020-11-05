@@ -34,6 +34,9 @@ const userSchema = new mongoose.Schema({
     default: '../public/images/default-user-avatar.png',
     trim: true
   },
+  favorites: {
+    type: [Object]
+  },
   phone: String,
   bio: String,
 },{ timestamps: true, toJSON: { virtuals: true } });
